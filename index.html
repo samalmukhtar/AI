@@ -563,5 +563,117 @@
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // تحسينات خاصة بالجوال
+        (function() {
+            // 1. إضافة قائمة هامبرجر للجوال
+            const mobileMenu = document.createElement('div');
+            mobileMenu.innerHTML = `
+                <style>
+                    .mobile-menu {
+                        display: none;
+                        position: fixed;
+                        top: 10px;
+                        left: 10px;
+                        z-index: 1000;
+                        background: #fff;
+                        padding: 10px;
+                        border-radius: 5px;
+                        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                    }
+                    
+                    @media (max-width: 768px) {
+                        .mobile-menu { display: block; }
+                        #top-section { margin-top: 40px; }
+                    }
+                </style>
+                <div class="mobile-menu">
+                    <button class="btn btn-sm btn-primary">☰ القائمة</button>
+                </div>
+            `;
+            document.body.prepend(mobileMenu);
+        
+            // 2. تعديل حجم الخطوط للشاشات الصغيرة
+            function adjustFontSizes() {
+                if (window.innerWidth <= 768) {
+                    document.querySelector('header h1').style.fontSize = '2rem';
+                    document.querySelectorAll('.comment-box').forEach(box => {
+                        box.style.fontSize = '14px';
+                    });
+                }
+            }
+            window.addEventListener('resize', adjustFontSizes);
+            adjustFontSizes();
+        
+            // 3. منع التكبير عند النقر المزدوج
+            document.addEventListener('dblclick', function(e) {
+                if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON') {
+                    e.preventDefault();
+                }
+            });
+        
+            // 4. تحسين شريط الأخبار للجوال
+            const newsTicker = document.querySelector('#news-ticker');
+            if (window.innerWidth <= 768) {
+                newsTicker.style.fontSize = '14px';
+                newsTicker.querySelector('span').style.animationDuration = '30s';
+            }
+        
+            // 5. إضافة دعم السحب للشريط الجانبي
+            let touchStartX = 0;
+            document.body.addEventListener('touchstart', e => {
+                touchStartX = e.touches[0].clientX;
+            });
+        
+            document.body.addEventListener('touchend', e => {
+                const touchEndX = e.changedTouches[0].clientX;
+                const diff = touchStartX - touchEndX;
+                
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) {
+                        // سحب لليسار - عرض القائمة
+                        document.querySelector('.mobile-menu button').click();
+                    }
+                }
+            });
+        
+            // 6. تحسين إدخال النموذج
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    window.scrollTo({
+                        top: input.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        })();
+        
+        // 7. تعديل ارتفاع الصور تلقائياً
+        window.addEventListener('load', () => {
+            const images = document.querySelectorAll('#image-section img');
+            images.forEach(img => {
+                if (window.innerWidth <= 768) {
+                    img.style.maxHeight = '200px';
+                }
+            });
+        });
+        
+        // 8. إغلاق القوائم عند النقر خارجها
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.mobile-menu')) {
+                // إغلاق القوائم المنبثقة هنا
+            }
+        });
+        
+        // 9. تحسين أداء الشريط المتحرك
+        window.addEventListener('orientationchange', () => {
+            document.querySelector('#news-content').style.animation = 'none';
+            setTimeout(() => {
+                document.querySelector('#news-content').style.animation = '';
+            }, 50);
+        });
+        </script>
 </body>
 </html>
+
